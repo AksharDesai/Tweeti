@@ -24,6 +24,7 @@
        display: flex;
        justify-content: center;
        align-items: center;
+       
        gap: 20px;
     }
 
@@ -40,8 +41,26 @@
         margin-bottom: 20px;
     }
     button{
-        margin-top: 20px;
+        
+        margin-left:45%;
+        
+        
     }
+    .tweeti-box{
+        width: 400px;
+        height:100px;
+        background-color:transparent;
+        border:1px solid white;
+        border-radius:20px;
+        color:white;
+        padding:20px;
+    }input:focus {
+        outline: none; /* Remove the default outline */
+        box-shadow: 0 0 10px 4px rgba(0, 255, 0, 0.7); /* Green box-shadow for focus ring */
+        border: 2px solid #4CAF50; /* Optional: Add a subtle border to match the focus ring */
+    }
+    
+   
 </style>
 {% endblock css %}
     
@@ -49,12 +68,15 @@
 
 {% block content %}
 
-<form method="post" action="{% url 'create_tweet' %}" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{form}}
 
-    <button type="submit" class="btn btn-success">Submit</button>
-</form>
+    <form  method="post" action="{% url 'create_tweet' %}" enctype="multipart/form-data">
+        
+        {% csrf_token %}
+        {{form}}
+        
+        <button type="submit" class="btn btn-success mt-4">Submit</button>
+    </form>
+
     
 {% endblock content %}
     

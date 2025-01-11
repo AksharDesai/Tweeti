@@ -1,12 +1,17 @@
 from django.shortcuts import render,redirect
-from .forms import Tweetform
-from .models import Tweet
+from .forms import Tweetform,CommentForm
+from .models import Tweet,Comments
+
+from django.http import HttpResponseRedirect
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.forms import AuthenticationForm
 
 from django.contrib.auth.forms import UserCreationForm
+
+
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -17,13 +22,16 @@ def index(request):
     
     return render(request,'index.html',context)
 
+@login_required
 def create(request):
     context={}
     
     
     if request.method == "POST":
        form = Tweetform(request.POST,request.FILES)
-       form.save()
+       tweet =  form.save(commit=False)
+       tweet.user = request.user
+       tweet.save()
        return redirect('/')
        
     else:
@@ -34,9 +42,14 @@ def create(request):
     context["form"]=form
     return render(request,'create.html',context)
 
+
+@login_required
 def edit(request,id):
     context={}
     tweet = Tweet.objects.get(id=id)
+    
+    if tweet.user != request.user:
+        return redirect('/')
     if request.method == "POST":
        form = Tweetform(request.POST,request.FILES,instance=tweet)
        form.save()
@@ -64,9 +77,24 @@ def delete(request,id):
 
 def view(request,id):
     context={}
-    tweet = Tweet.objects.get(id=id)
+    form = CommentForm()
     
+    tweet = Tweet.objects.get(id=id)
+    # comments = Comments.objects.get(id=id)
+    
+    if request.method == "POST":
+       form = CommentForm(request.POST)
+       
+       comment = form.save(commit=False)
+       comment.user = request.user
+       comment.tweet = tweet
+       comment.save()
+       return HttpResponseRedirect(request.path_info)
+    
+    
+    context["form"]=form
     context["tweet"]=tweet
+    # context["comments"]=comments
     return render(request,"view.html",context)
 
 

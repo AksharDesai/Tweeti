@@ -97,9 +97,12 @@
         simply skip over it entirely.
       </p>
       <p>
-        <a href="{% url 'create_tweet' %}" class="btn btn-success my-2"
-          >Create</a
-        >
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'create_tweet' %}" class="btn btn-success my-2">Create</a>
+        {% else %}
+        <a href="" class="btn btn-success my-2" disabled="disabled">Create</a>
+        {% endif %}
+
         {% if request.user.is_authenticated %}
         <a href="logout" class="btn btn-secondary my-2">LogOut</a>
         {% else %}
@@ -147,21 +150,30 @@
                     class="btn btn-sm btn-outline-secondary"
                     >View</a
                   >
+                  {% if t.user == request.user %}
                   <a
-                    href="{% url 'edit' id=t.id %}"
-                    class="btn btn-sm btn-outline-secondary"
-                    >Edit</a
+                  href="{% url 'edit' id=t.id %}"
+                  class="btn btn-sm btn-outline-secondary btn-success text-white"
+                  >Edit</a
                   >
+
+
+                  {% endif %}
                 </div>
+                {% if t.user == request.user %}
                 <form method="post" action="{% url 'delete' id=t.id %}">
                   {% csrf_token %}
 
+                  
+                    
+                  
                   <small class="text-muted"
-                    ><button type="submit" class="btn btn-danger btn-sm">
-                      Delete
-                    </button></small
+                  ><button type="submit" class="btn btn-danger btn-sm">
+                    Delete
+                  </button></small
                   >
                 </form>
+                {% endif %}
               </div>
             </div>
           </div>
